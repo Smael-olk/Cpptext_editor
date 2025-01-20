@@ -127,34 +127,3 @@ void OpenFile(HWND hwnd) {
     }
 }
 
-// Save file function
-void SaveFile(HWND hwnd) {
-    OPENFILENAME ofn;
-    char szFile[260] = {0};
-
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = hwnd;
-    ofn.lpstrFile = szFile;
-    ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = "Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
-    ofn.nFilterIndex = 1;
-    ofn.lpstrFileTitle = NULL;
-    ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = NULL;
-    ofn.Flags = OFN_OVERWRITEPROMPT;
-
-    if (GetSaveFileName(&ofn)) {
-        HANDLE hFile = CreateFile(ofn.lpstrFile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-        if (hFile != INVALID_HANDLE_VALUE) {
-            DWORD dwTextLength = GetWindowTextLength(hEdit);
-            char* pszText = (char*)malloc(dwTextLength + 1);
-            if (pszText) {
-                GetWindowText(hEdit, pszText, dwTextLength + 1);
-                WriteFile(hFile, pszText, dwTextLength, NULL, NULL);
-                free(pszText);
-            }
-            CloseHandle(hFile);
-        }
-    }
-}
